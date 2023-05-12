@@ -3,17 +3,21 @@ import LoginImg from '../../assets/images/login/login.svg'
 import { FaFacebookF, FaGithub, FaGooglePlus } from "react-icons/fa";
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../providers/AuthProviders';
+import useTitle from '../Hooks/PageTitle';
 const Login = () => {
     const [error, setError]=useState('')
     const navigate=useNavigate()
     const {signInWithPass}=useContext(AuthContext)
+    useTitle('login')
     const handleLogin = (event) => {
         event.preventDefault()
         const form = event.target
         const email = form.email.value
         const password = form.password.value
         signInWithPass(email, password)
-            .then(() => {
+            .then((result) => {
+                const loggedUser=result.user
+                console.log(loggedUser)
                 navigate('/')
              })
             .catch(error => {

@@ -7,6 +7,7 @@ const AuthProviders = ({children}) => {
     const auth = getAuth(app);
     const [user, setUser]=useState(null)
     const [loading, setLoading]=useState(true)
+  
 
     //Sign up with user & pass
     const signUpWithPass=(email, password)=>{
@@ -22,6 +23,7 @@ const AuthProviders = ({children}) => {
 
     //Sign out
     const userLogout=()=>{
+        setLoading(true)
         return signOut(auth)
     }
     //update profile info
@@ -37,7 +39,9 @@ const AuthProviders = ({children}) => {
             setUser(currentUser)
             setLoading(false)
         })
-        return ()=>unsubscribe
+        return ()=>{
+            return unsubscribe
+        }
     },[])
     //pass context value
     const authInfo={

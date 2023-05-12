@@ -2,11 +2,13 @@ import { Link } from 'react-router-dom'
 import LoginImg from '../../assets/images/login/login.svg'
 import { useContext, useState } from 'react'
 import { AuthContext } from '../../providers/AuthProviders'
+import useTitle from '../Hooks/PageTitle'
 
 const Register = () => {
     const [message, setMessage]=useState('')
     const [error, setError]=useState('')
     const {signUpWithPass, updateProfileInfo}=useContext(AuthContext)
+    useTitle('register')
     const handleRegister=(event)=>{
         event.preventDefault()
         const form=event.target

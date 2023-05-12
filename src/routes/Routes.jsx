@@ -5,6 +5,9 @@ import Register from "../pages/Register/Register";
 import LoginLayout from "../layouts/LoginLayout";
 import Login from "../pages/Login/Login";
 import ErrorPage from "../pages/Error/Error";
+import Checkout from "../pages/Checkout/Checkout";
+import Orders from "../pages/Orders/Orders";
+import PrivateRoutes from "./PrivateRoutes";
 
 const router = createBrowserRouter([
     {
@@ -16,6 +19,15 @@ const router = createBrowserRouter([
             path:'/',
             element:<Home></Home>
         },
+        {
+          path:'/checkout/:id',
+          element:<Checkout></Checkout>,
+          loader:({params})=>fetch(`http://localhost:5000/services/${params.id}`)
+        },
+        {
+          path:'/orders',
+          element:<PrivateRoutes><Orders></Orders></PrivateRoutes>
+        }
       ]
     },
     {
