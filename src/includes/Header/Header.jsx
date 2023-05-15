@@ -7,7 +7,9 @@ import { AuthContext } from '../../providers/AuthProviders';
 const Header = () => {
     const {user, userLogout}=useContext(AuthContext)
     const handleLogout=()=>{
-        userLogout().then(()=>{})
+        userLogout().then(()=>{
+            localStorage.removeItem('car-doctors-access')
+        })
         .catch(error=>console.log(error.message))
     }
     return (

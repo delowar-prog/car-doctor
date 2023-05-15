@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import LoginImg from '../../assets/images/login/login.svg'
 import { FaFacebookF, FaGithub, FaGooglePlus } from "react-icons/fa";
 import { useContext, useState } from 'react';
@@ -9,6 +9,9 @@ const Login = () => {
     const navigate=useNavigate()
     const {signInWithPass}=useContext(AuthContext)
     useTitle('login')
+    const location=useLocation();
+    const from=location.state?.from?.pathname || '/'
+
     const handleLogin = (event) => {
         event.preventDefault()
         const form = event.target
@@ -16,9 +19,22 @@ const Login = () => {
         const password = form.password.value
         signInWithPass(email, password)
             .then((result) => {
-                const loggedUser=result.user
-                console.log(loggedUser)
-                navigate('/')
+                const user=result.user
+                const loggedUser={
+                    email:user.email
+                }
+                fetch(`http://localhost:5000/jwt`, {
+                    method:'POST',
+                    headers:{
+                        'content-type':'application/json'
+                    },
+                    body:JSON.stringify(loggedUser)
+                })
+                .then(res=>res.json())
+                .then(data=>{
+                    localStorage.setItem('car-doctors-access', data.token) 
+                    navigate(from, { replace: true })
+                })
              })
             .catch(error => {
                 setError(error.message)

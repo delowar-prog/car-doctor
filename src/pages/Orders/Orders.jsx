@@ -4,18 +4,31 @@ import useTitle from "../Hooks/PageTitle"
 import { AuthContext } from "../../providers/AuthProviders"
 import OrdersRow from "./OrdersRow"
 import Swal from "sweetalert2"
+import { useNavigate } from "react-router-dom"
 
 
 const Orders = () => {
     const [orders, setOrders]=useState([])
     const {user}=useContext(AuthContext)
+    const navigate=useNavigate()
     useTitle('MyOrders')
     const url=`http://localhost:5000/bookings?email=${user.email}`
     useEffect(()=>{
-        fetch(url)
+        fetch(url, {
+            method:"GET",
+            headers:{
+                authorization: `Bearer ${localStorage.getItem('car-doctors-access')}`
+            }
+        })
         .then(res=>res.json())
-        .then(data=>setOrders(data))
-    },[])
+        .then(data=>{
+            if(!data.error){
+                setOrders(data)
+            }else{
+                navigate('/')
+            }
+        })
+    },[url, navigate])
 
     //delete 
     const deleteOrders=id=>{
@@ -49,6 +62,28 @@ const Orders = () => {
             }
           })
        }
+    //update
+    const handleConfirm=id=>{
+        fetch(`http://localhost:5000/bookings/${id}`, {
+            method:"PUT",
+            headers:{
+                'content-type':'application/json'
+            },
+            body:JSON.stringify({status:"confirm"})
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            console.log(data)
+            if(data.modifiedCount>0){
+                const remaining=orders.filter(order=>order._id!==id)
+                const updated=orders.find(order=>order._id===id)
+                updated.status='confirm'
+                const newOrders=[updated, ...remaining]
+                setOrders(newOrders)
+
+            }
+        })
+    }
     return (
         <div>
             <Banner2></Banner2>
@@ -71,7 +106,7 @@ const Orders = () => {
                     </thead>
                     <tbody>
                         {
-                            orders.map(order=><OrdersRow key={order._id} order={order} deleteOrders={deleteOrders}></OrdersRow>)
+                            orders.map(order=><OrdersRow key={order._id} order={order} deleteOrders={deleteOrders} handleConfirm={handleConfirm}></OrdersRow>)
                         }
                         
                     </tbody>

@@ -1,8 +1,8 @@
 import React from 'react'
 import Swal from 'sweetalert2'
 
-const OrdersRow = ({order,deleteOrders}) => {
-    const { _id, service, img, date, price } = order
+const OrdersRow = ({order,deleteOrders,handleConfirm}) => {
+    const { _id, service, img, date, price, status } = order
    
     
     return (
@@ -27,7 +27,11 @@ const OrdersRow = ({order,deleteOrders}) => {
             <td>{date}</td>
             <td>{price}</td>
             <th>
-                <button className="btn btn-ghost btn-xs">details</button>
+                {
+                    status==='confirm' ? <span className='text-primary'>Confirmed</span>:
+                    <button onClick={()=>handleConfirm(_id)} className="btn btn-ghost btn-xs">Please Confirm</button>
+                }
+                
             </th>
         </tr>
     )
